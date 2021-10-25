@@ -11,10 +11,11 @@ let ludo=[  [0,41, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0,25, 0, 0, 0, 0, 0, 0]]
 let p1pos,p1cor,p2pos,p2cor;
 let count=0;
-let p1=1;p2=1,p1next=1,p2next=1;
+let p1=1,p2=1,p1next=1,p2next=1,p1prev=1,p2prev=1;
 let dice1=6,dice2=6;
 let p1term=false,p2term=true;
 let p1start=false,p2start=false;
+let moving=false;
 let win=0;
 
 
@@ -67,11 +68,15 @@ function draw() {
 
     if(p1term){ fill(0,255,0)}
     else{fill(255,0,0)} 
-    ellipse(200,160,80,80);
+    ellipse(100,160,80,80);
+
 
     if(p2term){ fill(0,255,0)}
     else{fill(255,0,0)} 
-    ellipse(1300,160,80,80);
+    ellipse(1200,160,80,80);
+
+
+
 
     stroke(0)
     line(0,220,400,220)
@@ -85,6 +90,18 @@ function draw() {
     image(dice[dice2-1],1200,290,200,200)
 
 
+    //dice
+    fill(0)
+    stroke(255,255,0)
+    rect(220,120,120,80)
+    
+    rect(1320,120,120,80)
+    stroke(0)
+
+    fill(255,0,0)
+    
+    text(String(p1),228,180);
+    text(String(p2),1326,180);
 
 
 
@@ -110,21 +127,56 @@ function draw() {
             fill(255)
             text('Y',p2pos[0]-10-12,p2pos[1]+15);
 
-
-    
-
-     // delay
-
-
+    //winning logic
     if(p2>=100){
-        win=1;
+        win=1;won.play();
         swal("Good job!", "You won!", "success");noLoop();
     }
     if(p1>=100){
-        win=2;
+        win=2;over.play();
         swal("sorry!", "You loose!\nbetter luck next time", "error");noLoop();
     }
+        
 
+
+    // console.log(p2,p2next)
+    // console.log(p1,p1next)
+     // delay of the player
+    if(p1!=p1next){
+        if(count%20==0){
+            p1=p1+1;wood.play();
+            player_cor=ludo_decode(p1)
+            if(p1prev+dice1==p1){
+                moving=false;
+                p2term=true;p1term=false;blink.play();
+               
+            }
+            if((ludo[player_cor[0]][player_cor[1]]!=0)&&(p1prev+dice1==p1)){
+                if(ludo[player_cor[0]][player_cor[1]]>p1){wow.play();}
+                else{alas.play();}
+                p1=ludo[player_cor[0]][player_cor[1]]
+            }
+        } 
+    }
+    if(p2!=p2next){
+        if(count%20==0){
+            p2=p2+1;wood.play();
+            player_cor=ludo_decode(p2)
+            if(p2prev+dice2==p2){
+                p1term=true;p2term=false;
+                setTimeout(rollpc, 2000)
+            }
+            if((ludo[player_cor[0]][player_cor[1]]!=0)&&(p2prev+dice2==p2)){
+                if(ludo[player_cor[0]][player_cor[1]]>p2){wow.play();}
+                else{alas.play();}
+                p2=ludo[player_cor[0]][player_cor[1]]
+            }
+
+        } 
+    }
+
+
+    
 
     count=(count+1)%100000
 }
